@@ -1,4 +1,4 @@
-let abFilter = 25
+let typeFilter = 1
 const width = window.innerWidth;
 const height = window.innerHeight;
 
@@ -18,23 +18,57 @@ let teamMargin = {top: 10, right: 30, bottom: 30, left: 60},
     teamHeight = height-450 - teamMargin.top - teamMargin.bottom;
 
 
-d3.csv("players.csv").then(rawData =>{
+
+    // processData = f()
+
+    // function processData(){
+    //     const type = {};
+    //     data.forEach(d => {
+    //         if(d.Type_1 in type){
+    //             type[d.Type_1].size = type[d.Type_1].size +1;
+    //             type[d.Type_1].cumulativeSpeed = type[d.Type_1].cumulativeSpeed + d.Speed;
+    
+    //         }else{
+    //             const type = {
+    //                 name: d.Type_1,
+    //                 size: 1,
+    //                 cumulativeSpeed: d.Speed,
+    //                 average: 0
+    //             }
+    //             type[d.Type_1] = type;
+    //         }
+    //     })
+    // const formattedData = []
+    // Object.keys(type),forEach(d => {
+    //     type[d].average = type[d].Speed / type[d].size;
+    //     formattedData.push(type[d]);
+    // });
+    
+    // formattedData.sort(function(a,b){
+    //     if(a.name < b.name){ return -1;}
+    //     if(a.name > b.name){return 1;}
+    //     return 0;
+    // })
+    // return formattedData
+    // }
+
+d3.csv("pokemon.csv").then(rawData =>{
     console.log("rawData", rawData);
     
     rawData.forEach(function(d){
-        d.AB = Number(d.AB);
-        d.H = Number(d.H);
-        d.salary = Number(d.salary);
-        d.SO = Number(d.SO);
+        d.Type = d.Type_1;
+        d.HP = Number(d.HP);
+        d.speed = Number(d.Speed);
+        d.gen = Number(d.Generation);
     });
     
 
-    rawData = rawData.filter(d=>d.AB>abFilter);
+    rawData = rawData.filter(d=>d.Type>typeFilter);
     rawData = rawData.map(d=>{
                           return {
-                              "H_AB":d.H/d.AB,
-                              "SO_AB":d.SO/d.AB,
-                              "teamID":d.teamID,
+                              "Speed":d.speed,
+                              "HP":d.HP,
+                              "Generation":d.gen,
                           };
     });
     console.log(rawData);
@@ -53,7 +87,7 @@ d3.csv("players.csv").then(rawData =>{
     .attr("y", scatterHeight + 50)
     .attr("font-size", "20px")
     .attr("text-anchor", "middle")
-    .text("H/AB")
+    .text("HP")
     
 
     // Y label
@@ -63,11 +97,11 @@ d3.csv("players.csv").then(rawData =>{
     .attr("font-size", "20px")
     .attr("text-anchor", "middle")
     .attr("transform", "rotate(-90)")
-    .text("SO/AB")
+    .text("Speed")
 
     // X ticks
     const x1 = d3.scaleLinear()
-    .domain([0, d3.max(rawData, d => d.H_AB)])
+    .domain([0, d3.max(rawData, d => d.gen)])
     .range([0, scatterWidth])
 
     const xAxisCall = d3.axisBottom(x1)
@@ -83,7 +117,7 @@ d3.csv("players.csv").then(rawData =>{
 
     // Y ticks
     const y1 = d3.scaleLinear()
-    .domain([0, d3.max(rawData, d => d.SO_AB)])
+    .domain([0, d3.max(rawData, d => d.speed)])
     .range([scatterHeight, 0])
 
     const yAxisCall = d3.axisLeft(y1)
@@ -94,10 +128,10 @@ d3.csv("players.csv").then(rawData =>{
 
     rects.enter().append("circle")
          .attr("cx", function(d){
-             return x1(d.H_AB);
+             return x1(d.HP);
          })
          .attr("cy", function(d){
-             return y1(d.SO_AB);
+             return y1(d.speed);
          })
          .attr("r", 3)
          .attr("fill", "#69b3a2")
@@ -110,8 +144,8 @@ d3.csv("players.csv").then(rawData =>{
 
 //plot 2
     
-    q = rawData.reduce((s, { teamID }) => (s[teamID] = (s[teamID] || 0) + 1, s), {});
-    r = Object.keys(q).map((key) => ({ teamID: key, count: q[key] }));
+    q = rawData.reduce((s, { gen }) => (s[gen] = (s[gen] || 0) + 1, s), {});
+    r = Object.keys(q).map((key) => ({ gen: key, count: q[key] }));
     console.log(r);
 
            
@@ -126,7 +160,7 @@ d3.csv("players.csv").then(rawData =>{
     .attr("y", teamHeight + 50)
     .attr("font-size", "20px")
     .attr("text-anchor", "middle")
-    .text("Team")
+    .text("Type")
     
 
     // Y label
@@ -136,11 +170,11 @@ d3.csv("players.csv").then(rawData =>{
     .attr("font-size", "20px")
     .attr("text-anchor", "middle")
     .attr("transform", "rotate(-90)")
-    .text("Number of players")
+    .text("Number of Pokemon")
 
     // X ticks
     const x2 = d3.scaleBand()
-    .domain(r.map(d => d.teamID))
+    .domain(r.map(d => d.gen))
     .range([0, teamWidth])
     .paddingInner(0.3)
     .paddingOuter(0.2)
@@ -168,37 +202,10 @@ d3.csv("players.csv").then(rawData =>{
 
     rects2.enter().append("rect")
     .attr("y", d => y2(d.count))
-    .attr("x", (d) => x2(d.teamID))
+    .attr("x", (d) => x2(d.gen))
     .attr("width", x2.bandwidth)
     .attr("height", d => teamHeight - y2(d.count))
     .attr("fill", "grey")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -206,3 +213,67 @@ d3.csv("players.csv").then(rawData =>{
     console.log(error);
 });
 
+// chart = {
+//     // Declare the chart dimensions and margins.
+//     const width = 928;
+//     const height = 500;
+//     const marginTop = 20;
+//     const marginRight = 30;
+//     const marginBottom = 30;
+//     const marginLeft = 40;
+  
+//     // Declare the x (horizontal position) scale.
+//     const x = d3.scaleUtc(d3.extent(aapl, d => d.Type_1), [marginLeft, width - marginRight]);
+  
+//     // Declare the y (vertical position) scale.
+//     const y = d3.scaleLinear([0, d3.max(aapl, d => d.Speed)], [height - marginBottom, marginTop]);
+  
+//     // Declare the line generator.
+//     const line = d3.line()
+//         .x(d => x(d.Type_1))
+//         .y(d => y(d.Speed));
+  
+//     // Create the SVG container.
+//     const svg = d3.create("svg")
+//         .attr("width", width)
+//         .attr("height", height)
+//         .attr("viewBox", [0, 0, width, height])
+//         .attr("style", "max-width: 100%; height: auto; height: intrinsic;");
+  
+//     // Add the x-axis.
+//     svg.append("g")
+//         .attr("transform", `translate(0,${height - marginBottom})`)
+//         .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0));
+  
+//     // Add the y-axis, remove the domain line, add grid lines and a label.
+//     svg.append("g")
+//         .attr("transform", `translate(${marginLeft},0)`)
+//         .call(d3.axisLeft(y).ticks(height / 40))
+//         .call(g => g.select(".domain").remove())
+//         .call(g => g.selectAll(".tick line").clone()
+//             .attr("x2", width - marginLeft - marginRight)
+//             .attr("stroke-opacity", 0.1))
+//         .call(g => g.append("text")
+//             .attr("x", -marginLeft)
+//             .attr("y", 10)
+//             .attr("fill", "currentColor")
+//             .attr("text-anchor", "start")
+//             .text("↑ Daily close ($)"));
+  
+//     // Append a path for the line.
+//     svg.append("path")
+//         .attr("fill", "none")
+//         .attr("stroke", "steelblue")
+//         .attr("stroke-width", 1.5)
+//         .attr("d", line(aapl));
+  
+//     return svg.node();
+//   }
+// aapl = "pokemon.csv"
+// Plot.plot({
+//     y: {grid: true, label: "Type vs. Speed"},
+//     marks: [
+//       Plot.ruleY([0]),
+//       Plot.lineY(aapl, {x: "Type", y: "Speed", stroke: "navyblue"})
+//     ]
+//   })
