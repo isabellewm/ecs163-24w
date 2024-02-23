@@ -1,0 +1,30 @@
+<!doctype html>
+<html style="width:100%;height:100%;">
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<title>D3 Example</title>
+</head>
+<body style="width:100%;height:100%;margin: 0;">
+	<svg width="100%" height="100%">
+
+	</svg>
+
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+	<script src="main.js"></script>
+	<script>
+		var svg = d3.select("svg")
+		// Handmade legend
+		svg.append("circle").attr("cx",500).attr("cy",40).attr("r", 4).style("fill", "#69b3a2")
+		svg.append("circle").attr("cx",500).attr("cy",60).attr("r", 4).style("fill", "#404080")
+		svg.append("text").attr("x", 510).attr("y", 40).text("Generations 2-6").style("font-size", "15px").attr("alignment-baseline","middle")
+		svg.append("text").attr("x", 510).attr("y", 60).text("Generation 1").style("font-size", "15px").attr("alignment-baseline","middle")
+		svg.append("text").attr("x", 250).attr("y", 15).text("Speed vs. HP in all Pokemon").style("font-size", "16px").attr("alignment-baseline","middle") .style("text-decoration", "underline")
+		svg.append("text").attr("x", 275).attr("y", 310).text("HP").style("font-size", "15px").attr("alignment-baseline","middle")
+		svg.append("text").attr("x", -150).attr("y", 20).text("Speed").style("font-size", "15px") .attr("transform", "rotate(-90)").attr("alignment-baseline","middle")
+
+
+	</script>
+</body>
+</html>
+
