@@ -32,7 +32,7 @@ d3.csv("./pokemon.csv").then(rawData =>{
         d.Attack = Number(d.Attack);
     });
     
-
+//console.log('change')
 
     // rawData = rawData.filter(d=>d.Type>typeFilter);
     // console.log(rawData);
@@ -153,46 +153,72 @@ d3.csv("./pokemon.csv").then(rawData =>{
                 .attr("transform", `translate(${distrLeft}, ${distrTop})`)
 
 
-                brush
+
+                // brush
                 var brush = d3.brush()
                 .extent([[0, 0], [scatterWidth, scatterHeight]])
-                .on("start", brushed)
+            //    .on("start", brushed)
                 .on("brush", brushed)
-                .on("end", endbrushed)
-                ;
+                // .on("end", endbrushed)
+                // ;
+
+                g1.append("g")
+                    .attr("class", "brush")
+                    .call(brush);
+
+                function brushed(){
+                    var selection = d3.brushSelection(this);
+
+                    let selectedOnes = [];
+                    g1.selectAll("circle")
+                    .style("fill", function(d){
+                        var cx = x1(d.HP);
+                        var cy = y1(d.Speed);
+                       // var isSelected = (selection[0][0] <= cx && cx <= selection [1][0] && selection[0][1] <= cy && cy <= selection [1][1]);
+                        var isSelected = (selection[0][0] <= cx && cx <= selection[1][0]
+                            && selection[0][1] <= cy && cy <= selection[1][1]);
+                        if(isSelected){ 
+                            selectedOnes.push(d.name);
+                            return isSelected , "red";
+                        }
+
+                    });
 
 
-                function brushed() {
-                var extent = d3.event.selection;
-                genders = [0,0];
-                rects
-                .classed("selected", function(d) {
-                    selected = x1(d.x) >= extent[0][0] &&
-                    g1(d.x) <= extent[1][0] &&
-                    g1(d.y) >= extent[0][1] &&
-                    g1(d.y) <= extent[1][1];
-                    if( selected && d.gender === 1) 
-                    genders[0]++;
-                    else if(sselected && d.gender === 0) genders[1]++;
-                    return selected;
-                    })
-                rects3
-                .classed("selected", function(d) {
-                selected = x1(d.x) >= extent[0][0] &&
-                g1(d.x) <= extent[1][0] &&
-                g1(d.y) >= extent[0][1] &&
-                g1(d.y) <= extent[1][1];
-                if( selected && d.gender === 1) 
-                genders[0]++;
-                else if(selected && d.gender === 0) genders[1]++;
-                return selected;
-                });
+                    
                 }
-                function endbrushed() {
-                g1.data("circle").attr("fill", "red")
-                // .attr("y", (d, i)=> i*20)
-                // .text((d,i) => `${d}`+': '+`${genders[i]}`)
-                }
+
+                // function brushed() {
+                // var extent = d3.event.selection;
+                // genders = [0,0];
+                // rects
+                // .classed("selected", function(d) {
+                //     selected = x1(d.x) >= extent[0][0] &&
+                //     g1(d.x) <= extent[1][0] &&
+                //     g1(d.y) >= extent[0][1] &&
+                //     g1(d.y) <= extent[1][1];
+                //     if( selected && d.gender === 1) 
+                //     genders[0]++;
+                //     else if(sselected && d.gender === 0) genders[1]++;
+                //     return selected;
+                //     })
+                // rects3
+                // .classed("selected", function(d) {
+                // selected = x1(d.x) >= extent[0][0] &&
+                // g1(d.x) <= extent[1][0] &&
+                // g1(d.y) >= extent[0][1] &&
+                // g1(d.y) <= extent[1][1];
+                // if( selected && d.gender === 1) 
+                // genders[0]++;
+                // else if(selected && d.gender === 0) genders[1]++;
+                // return selected;
+                // });
+                // }
+                // function endbrushed() {
+                //     g1.selectAll("circle").attr("fill", "red")
+                // // .attr("y", (d, i)=> i*20)
+                // // .text((d,i) => `${d}`+': '+`${genders[i]}`)
+                // }
 
 
 //plot 2
