@@ -1,40 +1,47 @@
-let abFilter = 25
+let typeFilter = 2
 const width = window.innerWidth;
 const height = window.innerHeight;
 
 let scatterLeft = 0, scatterTop = 0;
-let scatterMargin = {top: 10, right: 30, bottom: 30, left: 60},
-    scatterWidth = 400 - scatterMargin.left - scatterMargin.right,
-    scatterHeight = 350 - scatterMargin.top - scatterMargin.bottom;
+let scatterMargin = {top: 30, right: 30, bottom: 30, left: 60},
+    scatterWidth = 600 - scatterMargin.left - scatterMargin.right,
+    scatterHeight = 300 - scatterMargin.top - scatterMargin.bottom;
 
 let distrLeft = 400, distrTop = 0;
 let distrMargin = {top: 10, right: 30, bottom: 30, left: 60},
     distrWidth = 400 - distrMargin.left - distrMargin.right,
     distrHeight = 350 - distrMargin.top - distrMargin.bottom;
 
-let teamLeft = 0, teamTop = 400;
+let teamLeft = 0, teamTop = 450;
 let teamMargin = {top: 10, right: 30, bottom: 30, left: 60},
     teamWidth = width - teamMargin.left - teamMargin.right,
     teamHeight = height-450 - teamMargin.top - teamMargin.bottom;
 
 
-d3.csv("players.csv").then(rawData =>{
-    console.log("rawData", rawData);
+
+
+
+d3.csv("./pokemon.csv").then(rawData =>{
+    // console.log("rawData", rawData);
     
     rawData.forEach(function(d){
-        d.AB = Number(d.AB);
-        d.H = Number(d.H);
-        d.salary = Number(d.salary);
-        d.SO = Number(d.SO);
+        d.Type = d.Type_1;
+        d.HP = Number(d.HP);
+        d.speed = Number(d.Speed);
+        d.gen = Number(d.Generation);
+        d.Attack = Number(d.Attack);
     });
     
+//console.log('change')
 
-    rawData = rawData.filter(d=>d.AB>abFilter);
+    // rawData = rawData.filter(d=>d.Type>typeFilter);
+    // console.log(rawData);
     rawData = rawData.map(d=>{
                           return {
-                              "H_AB":d.H/d.AB,
-                              "SO_AB":d.SO/d.AB,
-                              "teamID":d.teamID,
+                              "Speed":d.speed,
+                              "HP":d.HP,
+                              "Generation":d.gen,
+                              "Attack":d.Attack
                           };
     });
     console.log(rawData);
@@ -47,13 +54,13 @@ d3.csv("players.csv").then(rawData =>{
                 .attr("height", scatterHeight + scatterMargin.top + scatterMargin.bottom)
                 .attr("transform", `translate(${scatterMargin.left}, ${scatterMargin.top})`)
 
-    // X label
+  //  X label
     g1.append("text")
     .attr("x", scatterWidth / 2)
     .attr("y", scatterHeight + 50)
     .attr("font-size", "20px")
     .attr("text-anchor", "middle")
-    .text("H/AB")
+    .text("HP")
     
 
     // Y label
@@ -63,11 +70,20 @@ d3.csv("players.csv").then(rawData =>{
     .attr("font-size", "20px")
     .attr("text-anchor", "middle")
     .attr("transform", "rotate(-90)")
-    .text("SO/AB")
+    .text("Speed")
+
+    // title 
+    g1.append("text")
+        .attr("x", (scatterWidth / 2))             
+        .attr("y", 0 - (scatterMargin / 2))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Speed Vs. HP in all Pokemon")
 
     // X ticks
     const x1 = d3.scaleLinear()
-    .domain([0, d3.max(rawData, d => d.H_AB)])
+    .domain([0, d3.max(rawData, d => d.HP)])
     .range([0, scatterWidth])
 
     const xAxisCall = d3.axisBottom(x1)
@@ -81,38 +97,48 @@ d3.csv("players.csv").then(rawData =>{
         .attr("text-anchor", "end")
         .attr("transform", "rotate(-40)")
 
+    // console.log(rawData);
     // Y ticks
     const y1 = d3.scaleLinear()
-    .domain([0, d3.max(rawData, d => d.SO_AB)])
+    .domain([0, d3.max(rawData, d => d.Speed)])
     .range([scatterHeight, 0])
 
     const yAxisCall = d3.axisLeft(y1)
-                        .ticks(13)
+                        // .ticks(13)
     g1.append("g").call(yAxisCall)
 
+    // rawDataG = rawData.filter(d=>d.Generation>=typeFilter);
+    // console.log(rawDataG)
     const rects = g1.selectAll("circle").data(rawData)
 
     rects.enter().append("circle")
          .attr("cx", function(d){
-             return x1(d.H_AB);
+            //  console.log(d.HP)
+             return x1(d.HP);
          })
          .attr("cy", function(d){
-             return y1(d.SO_AB);
+            // console.log(d.Speed)
+             return y1(d.Speed);
          })
-         .attr("r", 3)
+         .attr("r", 1.5)
          .attr("fill", "#69b3a2")
+
 
 //space
     const g2 = svg.append("g")
                 .attr("width", distrWidth + distrMargin.left + distrMargin.right)
                 .attr("height", distrHeight + distrMargin.top + distrMargin.bottom)
                 .attr("transform", `translate(${distrLeft}, ${distrTop})`)
+                
+ 
+
 
 //plot 2
     
-    q = rawData.reduce((s, { teamID }) => (s[teamID] = (s[teamID] || 0) + 1, s), {});
-    r = Object.keys(q).map((key) => ({ teamID: key, count: q[key] }));
-    console.log(r);
+    q = rawData.reduce((s, { Generation }) => (s[Generation] = (s[Generation] || 0) + 1, s), {});
+    //console.log(q)
+    r = Object.keys(q).map((key) => ({ Generation: key, count: q[key] }));
+   // console.log(r);
 
            
     const g3 = svg.append("g")
@@ -126,7 +152,7 @@ d3.csv("players.csv").then(rawData =>{
     .attr("y", teamHeight + 50)
     .attr("font-size", "20px")
     .attr("text-anchor", "middle")
-    .text("Team")
+    .text("Generation")
     
 
     // Y label
@@ -136,11 +162,20 @@ d3.csv("players.csv").then(rawData =>{
     .attr("font-size", "20px")
     .attr("text-anchor", "middle")
     .attr("transform", "rotate(-90)")
-    .text("Number of players")
+    .text("Number of Pokemon")
+
+    // title - overlapping other title rn
+    g3.append("text")
+    .attr("x", (teamWidth / 2))             
+    .attr("y", 0 - (teamMargin / 2))
+    .attr("text-anchor", "middle")  
+    .style("font-size", "16px") 
+    .style("text-decoration", "underline")  
+    .text("Number of Pokemon per Generation")
 
     // X ticks
     const x2 = d3.scaleBand()
-    .domain(r.map(d => d.teamID))
+    .domain(r.map(d => d.Generation))
     .range([0, teamWidth])
     .paddingInner(0.3)
     .paddingOuter(0.2)
@@ -168,39 +203,94 @@ d3.csv("players.csv").then(rawData =>{
 
     rects2.enter().append("rect")
     .attr("y", d => y2(d.count))
-    .attr("x", (d) => x2(d.teamID))
+    .attr("x", (d) => x2(d.Generation))
     .attr("width", x2.bandwidth)
     .attr("height", d => teamHeight - y2(d.count))
     .attr("fill", "grey")
 
 
+// plot 3 - parallel plot
+// plottig HP, speed, attack for generation 1
+
+    rawDataF = rawData.filter(d=>d.Generation<typeFilter);
+    console.log(rawData)
+   // keys = rawData[0].keys()
+   // console.log(rawData.columns) 
+    keys = d3.keys(rawData[0]).filter(function(d){
+        return d != "Generation";
+    })
+    console.log(keys)
+    // chart dimensions for parallel plot
+    let pWidth = 800
+    pHeight = keys.length *120;
+    pMarginTop = 25;
+    pMarginRight = 10;
+    pMarginBottom = 30;
+    pMarginLeft = 400;
+
+    const x3 = new Map(Array.from(keys, key=> [key, d3.scaleLinear(d3.extent(rawDataF, d=>d[key]),[pMarginLeft, pWidth - pMarginRight])]));
+    console.log(x3)
+    const y = d3.scalePoint(keys, [pMarginTop, pHeight - pMarginBottom]);
+
+    const g4 = svg.append("g")
+    .attr("width", pWidth + pMarginLeft + pMarginRight)
+    .attr("height", pHeight + pMarginTop + pMarginBottom)
+    .attr("transform", `translate(${pMarginLeft}, ${pMarginTop})`)
+
+      //Title
+      g4.append("text")
+      .attr("x", 200+ (pWidth /2))             
+      .attr("y", 10 - (pMarginTop / 2))
+      .attr("text-anchor", "middle")  
+      .style("font-size", "16px") 
+      .style("text-decoration", "underline")  
+      .text("Generation 1: Speed, HP, and Attack")
+
+  // Append the lines.
+  const line = d3.line()
+    .defined(([, value]) => value != null)
+    .x(([key, value]) => x3.get(key)(value))
+    .y(([key]) => y(key));
+
+    g4.append("g")
+    .attr("fill", "none")
+    .attr("stroke-width", 1.5)
+    .attr("stroke-opacity", 0.4)
+  .selectAll("path")
+  .data(rawDataF)
+  .join("path")
+    .attr("stroke", "green")
+    .attr("d", d => line(d3.cross(keys, [d], (key, d) => [key, d[key]])))
+  .append("title")
+    .text(d => d.name);
 
 
 
+      // Append the axis for each key.
+  g4.append("g")
+  .selectAll("g")
+  .data(keys)
+  .join("g")
+    .attr("transform", d => `translate(0,${y(d)})`)
+    .each(function(d) { d3.select(this).call(d3.axisBottom(x3.get(d))); })
+    .call(g4 => g4.append("text")
+      .attr("x", pMarginLeft)
+      .attr("y", -6)
+      .attr("text-anchor", "start")
+      .attr("fill", "currentColor")
+      .text(d => d))
+    .call(g4 => g4.selectAll("text")
+      .clone(true).lower()
+      .attr("fill", "none")
+      .attr("stroke-width", 5)
+      .attr("stroke-linejoin", "round")
+      .attr("stroke", "white"));
 
 
 
+      return Object.assign(g4.node());
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      
 
 }).catch(function(error){
     console.log(error);
