@@ -1,0 +1,152 @@
+/* *{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+} */
+
+#game{
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+   /* // position: relative; */
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: rgb(7,7,20);
+}
+
+
+.fadeheart{
+    width: 50px;
+    height: 50px;
+    background: red;
+    margin: 25px;
+    transform: rotate(-45deg);
+    border-radius: 0 0 0 10px;
+    cursor: pointer;
+    visibility: visible;
+    /* animation: fades 5s linear; */
+    /* opacity: 0; */
+
+
+    /* animation: fade 2s linear ;
+    animation: fademore 5s linear; */
+    /* background: red;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    //margin-bottom: 10px
+    position: absolute;
+    transform: rotate(-45deg);
+    border-radius: 0 0 0 10px;
+    cursor: pointer;
+    animation: fades 2s linear infinite;
+  //  visibility: hidden; */
+} 
+
+/* .fade{
+    opacity: 0.3;
+} */
+
+ /* .fadeheart.animation{
+    animation: fades 2s linear;
+    animation: fademore 5s linear;
+} */
+
+/*.fademore{
+    animation: fademore 5s linear;
+} */
+
+
+.fadeheart::before{
+    position: absolute;
+    content: "";
+    top: -50%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: 50%;
+}
+
+.fadeheart::after{
+    position: absolute;
+    content: "";
+    right: -50%;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: 50%;
+}
+
+@keyframes fades {
+    0%{
+        opacity: inherit;
+    }
+    
+    100%{
+        visibility: hidden;
+        transform: scale(1.2) rotate (-45deg);
+        opacity: 0;
+
+    }
+}
+
+@keyframes fademore {
+    0%{
+        opacity: inherit;
+    }
+    to{
+        opacity: 0;
+    }
+}
+
+.filtered {
+    animation: fademore 7s linear;
+    border: 3px solid blue;
+}
+
+
+
+.heart{
+    width: 50px;
+    height: 50px;
+    background: red;
+    margin: 25px;
+    transform: rotate(-45deg);
+    border-radius: 0 0 0 10px;
+
+} 
+
+
+.heart::before{
+    position: absolute;
+    content: "";
+    top: -50%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: 50%;
+}
+
+.heart::after{
+    position: absolute;
+    content: "";
+    right: -50%;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: 50%;
+}
+
+
